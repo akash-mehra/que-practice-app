@@ -1,0 +1,47 @@
+[
+  {
+    "id": "usmle-step1-cardio-001",
+    "system": "Cardiovascular",
+    "discipline": "Pathology",
+    "vignette": "A 62-year-old male with a history of poorly controlled hypertension presents to the emergency department experiencing severe, sudden-onset tearing chest pain that radiates to his back. He describes the pain as \"the worst pain of my life.\" His blood pressure is 190/110 mmHg in the right arm and 160/95 mmHg in the left arm, and his heart rate is 105 bpm. A diastolic murmur is heard along the right sternal border. Peripheral pulses are diminished in the left upper extremity. An imaging study is performed immediately.",
+    "vignette_image": "https://images.unsplash.com/photo-1559757175-5700dde675bc?w=600",
+    "options": [
+      {
+        "letter": "A",
+        "text": "Cystic medial degeneration",
+        "isCorrect": true
+      },
+      {
+        "letter": "B",
+        "text": "Atherosclerotic plaque rupture with thrombosis",
+        "isCorrect": false
+      },
+      {
+        "letter": "C",
+        "text": "Granulomatous inflammation of the media",
+        "isCorrect": false
+      },
+      {
+        "letter": "D",
+        "text": "Ischemic necrosis of the myocardium",
+        "isCorrect": false
+      },
+      {
+        "letter": "E",
+        "text": "Suppurative infection of the vasa vasorum",
+        "isCorrect": false
+      }
+    ],
+    "solution": {
+      "educational_objective": "Aortic dissection is most commonly associated with chronic hypertension, which leads to cystic medial degeneration of the aortic media over time. This weakens the aortic wall and predisposes it to an intimal tear, allowing blood to dissect between the layers of the vessel wall.",
+      "explanation_image": "https://images.unsplash.com/photo-1576086213369-97a306d36557?w=600",
+      "main_rationale": "This patient's presentation of sudden, severe tearing chest pain radiating to the back, asymmetric blood pressures between the arms, and a new diastolic murmur (suggesting acute aortic regurgitation from dissection extending to the aortic root) is classic for acute aortic dissection. Chronic hypertension is the single most important risk factor for this condition, as sustained elevated wall stress causes progressive degeneration of the elastic and smooth muscle components of the tunica media. This process, known as cystic medial degeneration, replaces the normal elastic architecture of the media with mucoid, cystic pools of extracellular matrix, weakening the vessel wall's ability to withstand the pulsatile pressure of arterial flow. Eventually, an intimal tear develops, allowing pulsatile blood to enter the media and propagate a false lumen along the length of the aorta. Dissections are classified using the Stanford system: Type A involves the ascending aorta and is a surgical emergency due to the risk of pericardial tamponade, aortic regurgitation, and coronary artery occlusion, while Type B is limited to the descending aorta distal to the left subclavian artery and is typically managed medically with blood pressure control unless complications arise. Prompt recognition and imaging, most often with CT angiography or transesophageal echocardiography, are essential, as untreated proximal dissection carries a mortality rate that climbs rapidly with each passing hour.",
+      "incorrect_rationales": {
+        "B": "Atherosclerotic plaque rupture with superimposed thrombosis is the mechanism underlying acute coronary syndromes, such as myocardial infarction, rather than aortic dissection. While atherosclerosis can contribute to aneurysmal dilation of the abdominal aorta, it is not the primary mechanism of an acute intimal tear producing a dissection.",
+        "C": "Granulomatous inflammation of the media describes the histologic finding in giant cell (temporal) arteritis and Takayasu arteritis, large-vessel vasculitides that can weaken the aortic wall over time. However, this patient lacks features of vasculitis such as elevated inflammatory markers, jaw claudication, or a younger age (as in Takayasu), making cystic medial degeneration from chronic hypertension far more likely.",
+        "D": "Ischemic necrosis of the myocardium describes the pathology of a myocardial infarction, which can present with chest pain but typically does not cause tearing pain radiating to the back, blood pressure differentials between limbs, or a new diastolic murmur. ECG and cardiac biomarkers would be used to evaluate for this, but the clinical picture here is far more consistent with dissection.",
+        "E": "Suppurative infection of the vasa vasorum describes an infectious or mycotic process that can rarely weaken the aortic wall and lead to a mycotic aneurysm, usually in the setting of endocarditis or bacteremia. This patient has no fever, no history of infection, and a clear chronic hypertensive picture, making this an unlikely mechanism."
+      }
+    }
+  }
+]
