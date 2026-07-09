@@ -34,9 +34,9 @@ export default function SolutionPanel({ options, solution }: SolutionPanelProps)
           className="mb-6 rounded-[var(--radius-lg)] p-5"
           style={{
             background:
-              "linear-gradient(155deg, rgba(139,124,246,0.14), rgba(91,231,196,0.06))",
-            border: "1px solid rgba(139,124,246,0.35)",
-            boxShadow: "0 18px 40px -26px rgba(139,124,246,0.55)",
+              "linear-gradient(155deg, rgba(46,139,87,0.10), rgba(21,152,149,0.06))",
+            border: "1px solid rgba(46,139,87,0.28)",
+            boxShadow: "0 18px 40px -26px rgba(46,139,87,0.40)",
           }}
         >
           <p className="mb-1.5 text-[11px] font-bold uppercase tracking-wider text-[var(--accent-2)]">
@@ -90,7 +90,7 @@ export default function SolutionPanel({ options, solution }: SolutionPanelProps)
                 className={`rounded-[var(--radius-md)] border px-4 py-3.5 ${
                   opt.isCorrect
                     ? "border-[rgba(74,222,156,0.35)] bg-[rgba(74,222,156,0.06)]"
-                    : "border-[var(--line)] bg-white/[0.03]"
+                    : "border-[var(--line)] bg-black/[0.02]"
                 }`}
               >
                 <div className="flex items-start gap-2.5">
@@ -127,3 +127,4 @@ export default function SolutionPanel({ options, solution }: SolutionPanelProps)
     </div>
   );
 }
+

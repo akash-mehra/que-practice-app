@@ -26,7 +26,7 @@ export default function GenerateModal({
 }: GenerateModalProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [file, setFile] = useState<File | null>(null);
-  const [questionCount, setQuestionCount] = useState(10);
+  const [questionCount, setQuestionCount] = useState(5);
   const [subjectHint, setSubjectHint] = useState("");
   const [busy, setBusy] = useState(false);
   const [currentStep, setCurrentStep] = useState<PipelineStep | null>(null);
@@ -121,9 +121,9 @@ export default function GenerateModal({
             />
             <button
               onClick={() => fileInputRef.current?.click()}
-              className="mb-4 flex w-full items-center gap-3 rounded-[var(--radius-md)] border border-dashed border-[var(--line)] bg-white/[0.03] p-4 text-left hover:bg-white/[0.05]"
+              className="mb-4 flex w-full items-center gap-3 rounded-[var(--radius-md)] border border-dashed border-[var(--line)] bg-black/[0.02] p-4 text-left hover:bg-black/[0.035]"
             >
-              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[rgba(139,124,246,0.16)] text-[var(--accent)]">
+              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[rgba(46,139,87,0.14)] text-[var(--accent)]">
                 <FileUp size={20} />
               </span>
               <span>
@@ -161,7 +161,7 @@ export default function GenerateModal({
               value={subjectHint}
               onChange={(e) => setSubjectHint(e.target.value)}
               placeholder="e.g. Cardiovascular pathology"
-              className="mb-5 w-full rounded-xl border border-[var(--line)] bg-white/[0.04] px-3.5 py-3 text-[14px] text-[var(--ink-0)] outline-none placeholder:text-[var(--ink-muted)] focus:border-[var(--accent)]"
+              className="mb-5 w-full rounded-xl border border-[var(--line)] bg-black/[0.03] px-3.5 py-3 text-[14px] text-[var(--ink-0)] outline-none placeholder:text-[var(--ink-muted)] focus:border-[var(--accent)]"
             />
 
             {error && (
@@ -175,8 +175,8 @@ export default function GenerateModal({
               onClick={handleGenerate}
               className="flex w-full items-center justify-center gap-2 rounded-[20px] py-[16px] text-[15px] font-bold text-white"
               style={{
-                background: "linear-gradient(135deg,var(--accent),#6c5ce7)",
-                boxShadow: "0 14px 30px -10px rgba(139,124,246,0.55)",
+                background: "linear-gradient(135deg,var(--accent),var(--accent-2))",
+                boxShadow: "0 14px 30px -10px rgba(46,139,87,0.40)",
               }}
             >
               <Sparkles size={17} />
@@ -225,3 +225,4 @@ export default function GenerateModal({
     </div>
   );
 }
+

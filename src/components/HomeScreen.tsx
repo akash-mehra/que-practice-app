@@ -58,7 +58,7 @@ export default function HomeScreen({
           <button
             onClick={onOpenSettings}
             aria-label="Settings"
-            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[14px] border border-[var(--line)] bg-white/[0.06] text-[var(--ink-0)]"
+            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[14px] border border-[var(--line)] bg-black/[0.045] text-[var(--ink-0)]"
           >
             <Settings size={19} />
           </button>
@@ -78,7 +78,7 @@ export default function HomeScreen({
           className="rounded-[var(--radius-md)] border border-[var(--line)] p-4"
           style={{
             background:
-              "linear-gradient(155deg, rgba(255,255,255,0.07), rgba(255,255,255,0.02))",
+              "linear-gradient(155deg, rgba(46,139,87,0.07), rgba(46,139,87,0.015))",
           }}
         >
           <div className="font-[family-name:var(--font-display)] text-[28px] font-bold leading-none text-[var(--accent-2)]">
@@ -90,7 +90,7 @@ export default function HomeScreen({
           className="rounded-[var(--radius-md)] border border-[var(--line)] p-4"
           style={{
             background:
-              "linear-gradient(155deg, rgba(255,255,255,0.07), rgba(255,255,255,0.02))",
+              "linear-gradient(155deg, rgba(46,139,87,0.07), rgba(46,139,87,0.015))",
           }}
         >
           <div className="font-[family-name:var(--font-display)] text-[28px] font-bold leading-none text-[#ffb88c]">
@@ -103,9 +103,9 @@ export default function HomeScreen({
       {/* Generate from PDF card */}
       <button
         onClick={onOpenGenerate}
-        className="mb-3 flex items-center gap-3.5 rounded-[var(--radius-md)] border border-[var(--line)] bg-white/[0.05] p-4 text-left"
+        className="mb-3 flex items-center gap-3.5 rounded-[var(--radius-md)] border border-[var(--line)] bg-black/[0.035] p-4 text-left"
       >
-        <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[rgba(91,231,196,0.14)] text-[var(--accent-2)]">
+        <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[rgba(21,152,149,0.14)] text-[var(--accent-2)]">
           <Sparkles size={20} />
         </span>
         <span>
@@ -119,9 +119,9 @@ export default function HomeScreen({
       {/* Lab values quick-access card */}
       <button
         onClick={onOpenLabValues}
-        className="mb-4 flex items-center gap-3.5 rounded-[var(--radius-md)] border border-[var(--line)] bg-white/[0.05] p-4 text-left"
+        className="mb-4 flex items-center gap-3.5 rounded-[var(--radius-md)] border border-[var(--line)] bg-black/[0.035] p-4 text-left"
       >
-        <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[rgba(139,124,246,0.16)] text-[var(--accent)]">
+        <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[rgba(46,139,87,0.14)] text-[var(--accent)]">
           <FlaskConical size={20} />
         </span>
         <span>
@@ -141,7 +141,7 @@ export default function HomeScreen({
         <button
           onClick={onStart}
           className="relative block w-full overflow-hidden rounded-[var(--radius-lg)] border border-white/10 p-[22px] text-left"
-          style={{ background: "linear-gradient(150deg,#3A2E63,#241A3F)" }}
+          style={{ background: "linear-gradient(150deg,#1F6F54,#0F3D2E)" }}
         >
           <span
             aria-hidden
@@ -149,7 +149,7 @@ export default function HomeScreen({
           >
             ?
           </span>
-          <span className="relative inline-block rounded-full bg-[rgba(91,231,196,0.12)] px-2.5 py-1 text-[11.5px] font-bold uppercase tracking-wider text-[var(--accent-2)]">
+          <span className="relative inline-block rounded-full bg-[rgba(21,152,149,0.12)] px-2.5 py-1 text-[11.5px] font-bold uppercase tracking-wider text-[var(--accent-2)]">
             {nextQuestion.system}
           </span>
           <p className="relative mt-3.5 text-[18px] font-semibold leading-snug text-[var(--ink-0)]">
@@ -165,7 +165,7 @@ export default function HomeScreen({
       <div className="mb-6 grid grid-cols-2 gap-3">
         <button
           onClick={onStart}
-          className="flex flex-col items-start gap-2 rounded-[var(--radius-md)] border border-[var(--line)] bg-white/[0.05] p-4 text-left"
+          className="flex flex-col items-start gap-2 rounded-[var(--radius-md)] border border-[var(--line)] bg-black/[0.035] p-4 text-left"
         >
           <span className="flex items-center gap-1.5 font-[family-name:var(--font-display)] text-[20px] font-bold text-[var(--ink-0)]">
             <Flag size={16} className="text-[var(--amber)]" />
@@ -173,7 +173,7 @@ export default function HomeScreen({
           </span>
           <span className="text-[12.5px] text-[var(--ink-1)]">Flagged items</span>
         </button>
-        <div className="flex flex-col items-start gap-2 rounded-[var(--radius-md)] border border-[var(--line)] bg-white/[0.05] p-4">
+        <div className="flex flex-col items-start gap-2 rounded-[var(--radius-md)] border border-[var(--line)] bg-black/[0.035] p-4">
           <span className="font-[family-name:var(--font-display)] text-[20px] font-bold text-[var(--ink-0)]">
             {totalQuestions}
           </span>
@@ -186,8 +186,8 @@ export default function HomeScreen({
         onClick={onStart}
         className="mt-auto flex w-full items-center justify-center gap-2.5 rounded-[20px] py-[19px] text-[16.5px] font-bold text-white"
         style={{
-          background: "linear-gradient(135deg,var(--accent),#6c5ce7)",
-          boxShadow: "0 14px 30px -10px rgba(139,124,246,0.55)",
+          background: "linear-gradient(135deg,var(--accent),var(--accent-2))",
+          boxShadow: "0 14px 30px -10px rgba(46,139,87,0.40)",
         }}
       >
         <ArrowRight size={19} />
@@ -196,3 +196,4 @@ export default function HomeScreen({
     </div>
   );
 }
+

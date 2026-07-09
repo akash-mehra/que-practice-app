@@ -51,9 +51,10 @@ export default function ExamHeader({
           <button
             onClick={onGoHome}
             aria-label="Back to home"
-            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-[var(--line)] bg-white/[0.04] text-[var(--ink-1)] transition hover:bg-white/[0.08] hover:text-[var(--ink-0)]"
+            className="flex h-8 shrink-0 items-center gap-1.5 rounded-lg border border-[var(--line)] bg-black/[0.03] px-2.5 text-[12px] font-medium text-[var(--ink-1)] transition hover:bg-black/[0.06] hover:text-[var(--ink-0)]"
           >
             <Home size={15} />
+            <span className="hidden sm:inline">Back</span>
           </button>
         )}
         <div className="flex flex-col leading-tight">
@@ -66,10 +67,10 @@ export default function ExamHeader({
           </span>
         </div>
         <div className="hidden sm:flex items-center gap-2 border-l border-[var(--line)] pl-4">
-          <span className="rounded-full bg-[rgba(139,124,246,0.16)] px-2.5 py-1 text-[11px] font-medium text-[var(--accent)]">
+          <span className="rounded-full bg-[rgba(46,139,87,0.14)] px-2.5 py-1 text-[11px] font-medium text-[var(--accent)]">
             {system}
           </span>
-          <span className="rounded-full bg-white/[0.06] px-2.5 py-1 text-[11px] font-medium text-[var(--ink-1)]">
+          <span className="rounded-full bg-black/[0.045] px-2.5 py-1 text-[11px] font-medium text-[var(--ink-1)]">
             {discipline}
           </span>
         </div>
@@ -78,7 +79,7 @@ export default function ExamHeader({
       <div className="flex items-center gap-2.5">
         <button
           onClick={onOpenLabValues}
-          className="flex items-center gap-1.5 rounded-xl border border-[var(--line)] bg-white/[0.04] px-2.5 py-1.5 text-[12px] font-medium text-[var(--ink-1)] transition hover:bg-white/[0.08] hover:text-[var(--ink-0)]"
+          className="flex items-center gap-1.5 rounded-xl border border-[var(--line)] bg-black/[0.03] px-2.5 py-1.5 text-[12px] font-medium text-[var(--ink-1)] transition hover:bg-black/[0.06] hover:text-[var(--ink-0)]"
         >
           <FlaskConical size={14} />
           Lab Values
@@ -89,7 +90,7 @@ export default function ExamHeader({
           className={`flex items-center gap-1.5 rounded-xl px-2.5 py-1.5 text-[12px] font-semibold transition ${
             tutorMode
               ? "bg-[var(--accent-2)] text-[#0b2b22] hover:opacity-90"
-              : "border border-[var(--line)] bg-white/[0.04] text-[var(--ink-1)] hover:bg-white/[0.08]"
+              : "border border-[var(--line)] bg-black/[0.03] text-[var(--ink-1)] hover:bg-black/[0.06]"
           }`}
         >
           <GraduationCap size={14} />
@@ -100,7 +101,7 @@ export default function ExamHeader({
           className={`flex items-center gap-1.5 rounded-xl px-2.5 py-1.5 text-[13px] font-mono font-semibold tabular-nums ${
             lowTime
               ? "bg-[rgba(255,107,107,0.16)] text-[var(--danger)]"
-              : "bg-white/[0.06] text-[var(--ink-0)]"
+              : "bg-black/[0.045] text-[var(--ink-0)]"
           }`}
         >
           <Clock size={14} />
@@ -110,3 +111,4 @@ export default function ExamHeader({
     </header>
   );
 }
+

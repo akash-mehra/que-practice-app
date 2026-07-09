@@ -45,7 +45,7 @@ export default function LabValuesModal({ onClose }: LabValuesModalProps) {
           </button>
         </div>
         <div className="border-b border-[var(--line)] px-4 py-2.5">
-          <div className="flex items-center gap-2 rounded-xl border border-[var(--line)] bg-white/[0.04] px-2.5 py-1.5">
+          <div className="flex items-center gap-2 rounded-xl border border-[var(--line)] bg-black/[0.03] px-2.5 py-1.5">
             <Search size={15} className="text-[var(--ink-muted)]" />
             <input
               autoFocus
@@ -85,3 +85,4 @@ export default function LabValuesModal({ onClose }: LabValuesModalProps) {
     </div>
   );
 }
+

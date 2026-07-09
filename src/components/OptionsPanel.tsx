@@ -43,7 +43,7 @@ export default function OptionsPanel({
           const isCorrectAnswer = opt.isCorrect;
 
           let stateClasses =
-            "border-[var(--line)] bg-white/[0.03] hover:border-[var(--glass-border)] hover:bg-white/[0.06]";
+            "border-[var(--line)] bg-black/[0.02] hover:border-[var(--glass-border)] hover:bg-black/[0.045]";
 
           if (showAnswerState) {
             if (isCorrectAnswer) {
@@ -51,10 +51,10 @@ export default function OptionsPanel({
             } else if (isSelected && !isCorrectAnswer) {
               stateClasses = "border-[var(--danger)] bg-[rgba(255,107,107,0.1)]";
             } else {
-              stateClasses = "border-[var(--line)] bg-white/[0.02] opacity-60";
+              stateClasses = "border-[var(--line)] bg-black/[0.015] opacity-60";
             }
           } else if (isSelected) {
-            stateClasses = "border-[var(--accent)] bg-[rgba(139,124,246,0.12)] ring-1 ring-[var(--accent)]";
+            stateClasses = "border-[var(--accent)] bg-[rgba(46,139,87,0.10)] ring-1 ring-[var(--accent)]";
           }
 
           return (
@@ -125,3 +125,4 @@ export default function OptionsPanel({
     </div>
   );
 }
+

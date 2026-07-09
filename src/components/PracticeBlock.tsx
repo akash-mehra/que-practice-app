@@ -120,9 +120,13 @@ export default function PracticeBlock({
         onGoHome={onGoHome}
       />
 
-      <main className="flex flex-1 flex-col overflow-hidden">
-        <div className="grid flex-1 grid-cols-1 overflow-hidden md:grid-cols-2">
-          <div className="overflow-hidden border-b border-[var(--line)] md:border-b-0 md:border-r">
+      <main className={`flex flex-1 flex-col ${showSolution ? "overflow-y-auto" : "overflow-hidden"}`}>
+        <div
+          className={`grid grid-cols-1 grid-rows-2 overflow-hidden md:grid-cols-2 md:grid-rows-1 ${
+            showSolution ? "h-[52vh] shrink-0 md:h-[56vh]" : "flex-1"
+          }`}
+        >
+          <div className="min-h-0 overflow-hidden border-b border-[var(--line)] md:border-b-0 md:border-r">
             <VignettePanel
               vignette={question.vignette}
               vignetteImage={question.vignette_image}
@@ -130,7 +134,7 @@ export default function PracticeBlock({
               onToggleFlag={() => updateProgress({ flagged: !flagged })}
             />
           </div>
-          <div className="overflow-hidden">
+          <div className="min-h-0 overflow-hidden">
             <OptionsPanel
               options={question.options}
               selected={selected}
@@ -144,7 +148,7 @@ export default function PracticeBlock({
         </div>
 
         {submitted && !tutorMode && !blockEnded && (
-          <div className="flex items-center justify-between border-t border-[var(--line)] bg-[var(--bg-1)] px-6 py-4">
+          <div className="flex shrink-0 items-center justify-between border-t border-[var(--line)] bg-[var(--bg-1)] px-6 py-4">
             <p className="text-[13px] text-[var(--ink-1)]">
               Your answer has been recorded. Since Tutor Mode is off, rationale is withheld
               until the block ends — just like a real timed NBME-style board exam block.
@@ -159,7 +163,7 @@ export default function PracticeBlock({
         )}
 
         {showSolution && (
-          <div className="overflow-y-auto">
+          <div className="shrink-0">
             <SolutionPanel options={question.options} solution={question.solution} />
           </div>
         )}
@@ -179,3 +183,4 @@ export default function PracticeBlock({
     </div>
   );
 }
+

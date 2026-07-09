@@ -51,7 +51,7 @@ export default function SettingsModal({ onClose }: SettingsModalProps) {
           value={key}
           onChange={(e) => setKey(e.target.value)}
           placeholder="AIza…"
-          className="w-full rounded-xl border border-[var(--line)] bg-white/[0.04] px-3.5 py-3 text-[14px] text-[var(--ink-0)] outline-none placeholder:text-[var(--ink-muted)] focus:border-[var(--accent)]"
+          className="w-full rounded-xl border border-[var(--line)] bg-black/[0.03] px-3.5 py-3 text-[14px] text-[var(--ink-0)] outline-none placeholder:text-[var(--ink-muted)] focus:border-[var(--accent)]"
         />
 
         <div className="mt-4 flex gap-2.5">
@@ -63,7 +63,7 @@ export default function SettingsModal({ onClose }: SettingsModalProps) {
           </button>
           <button
             onClick={handleClear}
-            className="flex items-center justify-center gap-1.5 rounded-xl border border-[var(--line)] bg-white/[0.04] px-4 py-3 text-[13.5px] font-semibold text-[var(--ink-1)] hover:bg-white/[0.08]"
+            className="flex items-center justify-center gap-1.5 rounded-xl border border-[var(--line)] bg-black/[0.03] px-4 py-3 text-[13.5px] font-semibold text-[var(--ink-1)] hover:bg-black/[0.06]"
           >
             <Trash2 size={14} />
             Clear
@@ -79,3 +79,4 @@ export default function SettingsModal({ onClose }: SettingsModalProps) {
     </div>
   );
 }
+

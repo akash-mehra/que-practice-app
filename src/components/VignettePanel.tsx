@@ -57,7 +57,7 @@ export default function VignettePanel({
           className={`flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-semibold transition ${
             flagged
               ? "bg-[rgba(255,180,84,0.16)] text-[var(--amber)]"
-              : "text-[var(--ink-muted)] hover:bg-white/[0.06] hover:text-[var(--ink-1)]"
+              : "text-[var(--ink-muted)] hover:bg-black/[0.045] hover:text-[var(--ink-1)]"
           }`}
         >
           <Flag size={13} fill={flagged ? "currentColor" : "none"} />
@@ -106,3 +106,4 @@ export default function VignettePanel({
     </div>
   );
 }
+

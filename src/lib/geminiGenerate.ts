@@ -142,7 +142,18 @@ export async function generateQuestionsFromPdf(
         ],
       },
     ],
-    generationConfig: { temperature: 0.4 },
+    generationConfig: {
+      temperature: 0.4,
+      // Forces Gemini to return raw JSON directly (no markdown fences or
+      // conversational preamble), which is far more reliable than asking
+      // nicely in the prompt alone.
+      responseMimeType: "application/json",
+      // Detailed vignettes + 5 rationale-annotated options per question add
+      // up fast. A low ceiling here is the most common cause of "response
+      // got cut off mid-JSON" parse failures, especially at higher question
+      // counts — so we ask for generous headroom.
+      maxOutputTokens: 65536,
+    },
   };
 
   const response = await fetch(`${GEMINI_ENDPOINT}?key=${encodeURIComponent(apiKey)}`, {
@@ -159,11 +170,24 @@ export async function generateQuestionsFromPdf(
   const data = await response.json();
 
   onStep?.("parse");
-  const rawText = (data.candidates?.[0]?.content?.parts || [])
+  const candidate = data.candidates?.[0];
+  const finishReason: string | undefined = candidate?.finishReason;
+
+  const rawText = (candidate?.content?.parts || [])
     .map((p: { text?: string }) => p.text || "")
     .join("")
     .trim();
-  if (!rawText) throw new Error("Gemini returned an empty response.");
+
+  if (!rawText) {
+    if (finishReason === "SAFETY" || finishReason === "PROHIBITED_CONTENT") {
+      throw new Error(
+        "Gemini declined to process this PDF (flagged by its safety filters). Try a different document."
+      );
+    }
+    throw new Error(
+      `Gemini returned an empty response${finishReason ? ` (finishReason: ${finishReason})` : ""}.`
+    );
+  }
 
   let cleanText = rawText.trim();
   cleanText = cleanText
@@ -181,7 +205,20 @@ export async function generateQuestionsFromPdf(
   try {
     parsed = JSON.parse(cleanText);
   } catch {
-    throw new Error("Couldn't parse Gemini's response as JSON.");
+    if (finishReason === "MAX_TOKENS") {
+      throw new Error(
+        `Gemini's response was cut off before finishing (hit the output token limit) — try requesting fewer questions (e.g. ${Math.max(
+          1,
+          Math.floor(questionCount / 2)
+        )} instead of ${questionCount}).`
+      );
+    }
+    const preview = cleanText.slice(0, 160).replace(/\s+/g, " ");
+    throw new Error(
+      `Couldn't parse Gemini's response as JSON${
+        finishReason ? ` (finishReason: ${finishReason})` : ""
+      }. Response started with: "${preview}${cleanText.length > 160 ? "…" : ""}"`
+    );
   }
   if (!Array.isArray(parsed) || parsed.length === 0) {
     throw new Error("Gemini didn't return any questions.");
@@ -195,3 +232,4 @@ export async function generateQuestionsFromPdf(
 
   return validated;
 }
+

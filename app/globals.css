@@ -1,22 +1,22 @@
 @import "tailwindcss";
 
 :root {
-  /* ===== Recall app design tokens (kept in sync with the flashcard app) ===== */
-  --bg-0: #0f0b18;
-  --bg-1: #171025;
-  --bg-2: #1e1730;
-  --bg-3: #241c38;
-  --ink-0: #f5f2fb;
-  --ink-1: #b6adc9;
-  --ink-2: #5b5470;
-  --ink-muted: #83798f;
-  --line: rgba(255, 255, 255, 0.08);
-  --glass-border: rgba(255, 255, 255, 0.14);
-  --accent: #8b7cf6;
-  --accent-2: #5be7c4;
-  --danger: #ff6b6b;
-  --amber: #ffb454;
-  --ok: #4ade9c;
+  /* ===== White / sea-green theme ===== */
+  --bg-0: #ffffff;
+  --bg-1: #f4faf8;
+  --bg-2: #eaf5f1;
+  --bg-3: #dcece5;
+  --ink-0: #10241d;
+  --ink-1: #45564f;
+  --ink-2: #93a49c;
+  --ink-muted: #6f8079;
+  --line: rgba(16, 36, 29, 0.1);
+  --glass-border: rgba(16, 36, 29, 0.16);
+  --accent: #2e8b57;
+  --accent-2: #159895;
+  --danger: #d64545;
+  --amber: #c98a12;
+  --ok: #2e8b57;
   --radius-lg: 28px;
   --radius-md: 18px;
   --radius-sm: 12px;
@@ -49,10 +49,11 @@ h1, h2, h3 {
 }
 
 mark {
-  background: rgba(139, 124, 246, 0.35);
+  background: rgba(46, 139, 87, 0.22);
   color: var(--ink-0);
 }
 
 ::selection {
-  background: rgba(139, 124, 246, 0.4);
+  background: rgba(46, 139, 87, 0.25);
 }
+
