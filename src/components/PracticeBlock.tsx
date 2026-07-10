@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import type { PracticeQuestion, QuestionProgress } from "@/types/question";
+import type { PracticeQuestion, QuestionProgress, QuestionSolution } from "@/types/question";
 import { loadProgress, saveProgress } from "@/lib/qbank";
 import ExamHeader from "./ExamHeader";
 import ExamFooter from "./ExamFooter";
@@ -9,11 +9,13 @@ import VignettePanel from "./VignettePanel";
 import OptionsPanel from "./OptionsPanel";
 import SolutionPanel from "./SolutionPanel";
 import LabValuesModal from "./LabValuesModal";
+import SettingsModal from "./SettingsModal";
 
 interface PracticeBlockProps {
   questions: PracticeQuestion[];
   startIndex?: number;
   onGoHome?: () => void;
+  onQuestionUpdated?: (id: string, solution: QuestionSolution) => void;
 }
 
 const emptyProgress: QuestionProgress = {
@@ -27,6 +29,7 @@ export default function PracticeBlock({
   questions,
   startIndex = 0,
   onGoHome,
+  onQuestionUpdated,
 }: PracticeBlockProps) {
   const [currentIndex, setCurrentIndex] = useState(
     Math.min(Math.max(startIndex, 0), Math.max(questions.length - 1, 0))
@@ -40,6 +43,7 @@ export default function PracticeBlock({
   );
   const [tutorMode, setTutorMode] = useState(true);
   const [labValuesOpen, setLabValuesOpen] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
 
   // Strike-through marks are intentionally session-only (not persisted) and
   // must reset whenever the active question changes. Rather than an effect,
@@ -164,7 +168,13 @@ export default function PracticeBlock({
 
         {showSolution && (
           <div className="shrink-0">
-            <SolutionPanel options={question.options} solution={question.solution} />
+            <SolutionPanel
+              vignette={question.vignette}
+              options={question.options}
+              solution={question.solution}
+              onExplained={(newSolution) => onQuestionUpdated?.(question.id, newSolution)}
+              onNeedsApiKey={() => setSettingsOpen(true)}
+            />
           </div>
         )}
       </main>
@@ -180,6 +190,7 @@ export default function PracticeBlock({
       />
 
       {labValuesOpen && <LabValuesModal onClose={() => setLabValuesOpen(false)} />}
+      {settingsOpen && <SettingsModal onClose={() => setSettingsOpen(false)} />}
     </div>
   );
 }

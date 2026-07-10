@@ -37,6 +37,17 @@ export function appendToQBank(existing: PracticeQuestion[], newQuestions: Practi
   return merged;
 }
 
+/** Replaces a single question in the qbank by id (e.g. after generating an AI explanation) and persists it. */
+export function updateQuestionInQBank(
+  existing: PracticeQuestion[],
+  id: string,
+  updates: Partial<PracticeQuestion>
+): PracticeQuestion[] {
+  const updated = existing.map((q) => (q.id === id ? { ...q, ...updates } : q));
+  saveQBank(updated);
+  return updated;
+}
+
 /** Per-question progress (selected answer, submitted state, flag), keyed by question id. */
 export function loadProgress(): Record<string, QuestionProgress> {
   if (!isBrowser()) return {};
@@ -84,3 +95,4 @@ export function clearGeminiKey() {
     // ignore
   }
 }
+

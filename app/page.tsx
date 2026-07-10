@@ -8,8 +8,8 @@ import GenerateModal from "@/components/GenerateModal";
 import SettingsModal from "@/components/SettingsModal";
 import ImportModal from "@/components/ImportModal";
 import seedQuestions from "@/data/questions.json";
-import type { PracticeQuestion, QuestionProgress } from "@/types/question";
-import { loadQBank, appendToQBank, loadProgress } from "@/lib/qbank";
+import type { PracticeQuestion, QuestionProgress, QuestionSolution } from "@/types/question";
+import { loadQBank, appendToQBank, updateQuestionInQBank, loadProgress } from "@/lib/qbank";
 
 type Screen = "home" | "block";
 type Overlay = "labValues" | "generate" | "settings" | "import" | null;
@@ -58,6 +58,11 @@ export default function Home() {
     setQuestions(merged);
   };
 
+  const handleQuestionUpdated = (id: string, solution: QuestionSolution) => {
+    const updated = updateQuestionInQBank(questions, id, { solution });
+    setQuestions(updated);
+  };
+
   const handleStart = (index: number) => {
     setStartIndex(index);
     setScreen("block");
@@ -89,6 +94,7 @@ export default function Home() {
             setProgress(loadProgress());
             setScreen("home");
           }}
+          onQuestionUpdated={handleQuestionUpdated}
         />
       )}
 

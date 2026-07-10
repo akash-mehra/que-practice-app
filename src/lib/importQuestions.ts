@@ -14,6 +14,9 @@
  * If none of those produce valid JSON, this throws with a short preview of
  * where parsing broke down so the person can fix the source.
  */
+export const NO_EXPLANATION_PLACEHOLDER =
+  "No explanation was provided with this imported question.";
+
 export function parseQuestionsInput(input: string): unknown[] {
   const trimmed = input.trim();
   if (!trimmed) {
@@ -92,7 +95,7 @@ export function normalizeQuestionsShape(raw: unknown[]): unknown[] {
     // only" dataset rather than rejecting it outright.
     if (!q.solution || typeof q.solution !== "object") {
       q.solution = {
-        main_rationale: "No explanation was provided with this imported question.",
+        main_rationale: NO_EXPLANATION_PLACEHOLDER,
         educational_objective: "",
         incorrect_rationales: {},
       };

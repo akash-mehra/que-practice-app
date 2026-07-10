@@ -2,7 +2,7 @@
 
 import { useRef, useState } from "react";
 import { X, FileJson, Upload, CheckCircle2, AlertCircle, ChevronDown } from "lucide-react";
-import { parseQuestionsInput, normalizeQuestionsShape } from "@/lib/importQuestions";
+import { parseQuestionsInput, normalizeQuestionsShape, NO_EXPLANATION_PLACEHOLDER } from "@/lib/importQuestions";
 import { validateQuestions, type ValidationError } from "@/lib/questionValidation";
 import type { PracticeQuestion } from "@/types/question";
 
@@ -42,7 +42,7 @@ export default function ImportModal({ onClose, onImported }: ImportModalProps) {
           item !== null &&
           (item as Record<string, unknown>).solution &&
           (item as { solution?: { main_rationale?: string } }).solution?.main_rationale ===
-            "No explanation was provided with this imported question."
+            NO_EXPLANATION_PLACEHOLDER
       ).length;
       setPlaceholderRationaleCount(noRationaleCount);
       const { valid, errors } = validateQuestions(normalized, "import");
