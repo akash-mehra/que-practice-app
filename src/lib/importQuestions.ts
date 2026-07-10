@@ -60,3 +60,50 @@ export function parseQuestionsInput(input: string): unknown[] {
   );
 }
 
+/**
+ * Best-effort normalization of a few known alternate question shapes into
+ * our canonical one, run before validateQuestions(). This does NOT relax
+ * validation — it just recognizes common real-world variants (e.g. an
+ * answer-key style dataset with options as a letter-keyed object plus a
+ * separate "correct_answer" field, and no rationale text at all) and maps
+ * them onto the fields validateQuestions() actually checks. Anything it
+ * doesn't recognize passes through unchanged, so it still fails validation
+ * with a clear reason rather than being silently mis-imported.
+ */
+export function normalizeQuestionsShape(raw: unknown[]): unknown[] {
+  return raw.map((item) => {
+    if (typeof item !== "object" || item === null) return item;
+    const q: Record<string, unknown> = { ...(item as Record<string, unknown>) };
+
+    // Object-keyed options ({ "A": "text", "B": "text" }) + a separate
+    // "correct_answer" / "answer" field -> our array-of-{letter,text,isCorrect}.
+    if (q.options && typeof q.options === "object" && !Array.isArray(q.options)) {
+      const correctRaw = q.correct_answer ?? q.answer ?? q.correctAnswer;
+      const correctLetter =
+        typeof correctRaw === "string" ? correctRaw.trim().toUpperCase() : undefined;
+      q.options = Object.entries(q.options as Record<string, unknown>).map(([letter, text]) => ({
+        letter,
+        text: typeof text === "string" ? text : String(text),
+        isCorrect: letter.trim().toUpperCase() === correctLetter,
+      }));
+    }
+
+    // No rationale/explanation content at all — treat as a valid "answer key
+    // only" dataset rather than rejecting it outright.
+    if (!q.solution || typeof q.solution !== "object") {
+      q.solution = {
+        main_rationale: "No explanation was provided with this imported question.",
+        educational_objective: "",
+        incorrect_rationales: {},
+      };
+    }
+
+    if (!q.id) {
+      const num = q.question_number ?? q.number ?? q.qid;
+      if (typeof num !== "undefined") q.id = `import-q${num}`;
+    }
+
+    return q;
+  });
+}
+

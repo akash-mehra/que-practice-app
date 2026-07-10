@@ -2,7 +2,7 @@
 
 import { useRef, useState } from "react";
 import { X, FileJson, Upload, CheckCircle2, AlertCircle, ChevronDown } from "lucide-react";
-import { parseQuestionsInput } from "@/lib/importQuestions";
+import { parseQuestionsInput, normalizeQuestionsShape } from "@/lib/importQuestions";
 import { validateQuestions, type ValidationError } from "@/lib/questionValidation";
 import type { PracticeQuestion } from "@/types/question";
 
@@ -23,6 +23,7 @@ export default function ImportModal({ onClose, onImported }: ImportModalProps) {
   const [validationErrors, setValidationErrors] = useState<ValidationError[]>([]);
   const [showErrors, setShowErrors] = useState(false);
   const [importedCount, setImportedCount] = useState<number | null>(null);
+  const [placeholderRationaleCount, setPlaceholderRationaleCount] = useState(0);
 
   const handleFilePick = async (file: File) => {
     setFileName(file.name);
@@ -34,7 +35,17 @@ export default function ImportModal({ onClose, onImported }: ImportModalProps) {
     setError(null);
     try {
       const raw = parseQuestionsInput(text);
-      const { valid, errors } = validateQuestions(raw, "import");
+      const normalized = normalizeQuestionsShape(raw);
+      const noRationaleCount = normalized.filter(
+        (item) =>
+          typeof item === "object" &&
+          item !== null &&
+          (item as Record<string, unknown>).solution &&
+          (item as { solution?: { main_rationale?: string } }).solution?.main_rationale ===
+            "No explanation was provided with this imported question."
+      ).length;
+      setPlaceholderRationaleCount(noRationaleCount);
+      const { valid, errors } = validateQuestions(normalized, "import");
       if (valid.length === 0) {
         setError(
           errors.length > 0
@@ -180,6 +191,17 @@ export default function ImportModal({ onClose, onImported }: ImportModalProps) {
                 {validQuestions.length === 1 ? "" : "s"} ready to import.
               </span>
             </div>
+
+            {placeholderRationaleCount > 0 && (
+              <div className="mb-4 flex items-start gap-2 rounded-xl border border-[rgba(201,138,18,0.35)] bg-[rgba(201,138,18,0.08)] p-3.5 text-[12.5px] text-[var(--ink-1)]">
+                <AlertCircle size={16} className="mt-0.5 shrink-0 text-[var(--amber)]" />
+                <span>
+                  <strong className="text-[var(--ink-0)]">{placeholderRationaleCount}</strong>{" "}
+                  of these had no explanation text in the source file — they&apos;ll show a
+                  placeholder (&ldquo;No explanation was provided&rdquo;) instead of a real rationale.
+                </span>
+              </div>
+            )}
 
             {validationErrors.length > 0 && (
               <div className="mb-4 rounded-xl border border-[rgba(201,138,18,0.35)] bg-[rgba(201,138,18,0.08)] p-3.5">
