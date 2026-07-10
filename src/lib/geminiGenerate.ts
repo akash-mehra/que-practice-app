@@ -1,4 +1,5 @@
-import type { PracticeQuestion, QuestionOption } from "@/types/question";
+import type { PracticeQuestion } from "@/types/question";
+import { validateQuestions } from "./questionValidation";
 
 const GEMINI_ENDPOINT =
   "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent";
@@ -67,57 +68,6 @@ export interface GenerateOptions {
   questionCount: number;
   subjectHint: string;
   onStep?: (step: PipelineStep) => void;
-}
-
-function isValidOption(o: unknown): o is QuestionOption {
-  if (typeof o !== "object" || o === null) return false;
-  const opt = o as Record<string, unknown>;
-  return (
-    typeof opt.letter === "string" &&
-    typeof opt.text === "string" &&
-    typeof opt.isCorrect === "boolean"
-  );
-}
-
-function validateAndNormalize(raw: unknown[], startIndex: number): PracticeQuestion[] {
-  const out: PracticeQuestion[] = [];
-  raw.forEach((item, i) => {
-    if (typeof item !== "object" || item === null) return;
-    const q = item as Record<string, unknown>;
-
-    if (typeof q.vignette !== "string" || !q.vignette.trim()) return;
-    if (!Array.isArray(q.options) || q.options.length < 4) return;
-    if (!q.options.every(isValidOption)) return;
-    const options = q.options as QuestionOption[];
-    const correctCount = options.filter((o) => o.isCorrect).length;
-    if (correctCount !== 1) return;
-
-    const solutionRaw = q.solution as Record<string, unknown> | undefined;
-    if (!solutionRaw || typeof solutionRaw.main_rationale !== "string") return;
-
-    out.push({
-      id: `gen-${Date.now()}-${startIndex + i}`,
-      system: typeof q.system === "string" && q.system ? q.system : "General",
-      discipline: typeof q.discipline === "string" && q.discipline ? q.discipline : "Pathology",
-      vignette: q.vignette as string,
-      vignette_image: undefined,
-      options,
-      solution: {
-        educational_objective:
-          typeof solutionRaw.educational_objective === "string"
-            ? solutionRaw.educational_objective
-            : "",
-        explanation_image: undefined,
-        main_rationale: solutionRaw.main_rationale as string,
-        incorrect_rationales:
-          typeof solutionRaw.incorrect_rationales === "object" &&
-          solutionRaw.incorrect_rationales !== null
-            ? (solutionRaw.incorrect_rationales as Record<string, string>)
-            : {},
-      },
-    });
-  });
-  return out;
 }
 
 export async function generateQuestionsFromPdf(
@@ -225,11 +175,11 @@ export async function generateQuestionsFromPdf(
   }
 
   onStep?.("save");
-  const validated = validateAndNormalize(parsed, 0);
-  if (validated.length === 0) {
+  const { valid } = validateQuestions(parsed, "gen");
+  if (valid.length === 0) {
     throw new Error("Gemini's questions didn't match the expected format. Try again.");
   }
 
-  return validated;
+  return valid;
 }
 

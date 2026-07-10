@@ -1,6 +1,6 @@
 "use client";
 
-import { Settings, ArrowRight, Flag, FlaskConical, BookOpenCheck, Sparkles } from "lucide-react";
+import { Settings, ArrowRight, Flag, FlaskConical, BookOpenCheck, Sparkles, FileJson } from "lucide-react";
 import type { PracticeQuestion } from "@/types/question";
 
 interface HomeScreenProps {
@@ -12,6 +12,7 @@ interface HomeScreenProps {
   onOpenLabValues: () => void;
   onOpenSettings: () => void;
   onOpenGenerate: () => void;
+  onOpenImport: () => void;
 }
 
 function getGreeting() {
@@ -38,6 +39,7 @@ export default function HomeScreen({
   onOpenLabValues,
   onOpenSettings,
   onOpenGenerate,
+  onOpenImport,
 }: HomeScreenProps) {
   const teaser = nextQuestion.vignette.slice(0, 110).trim() + "…";
   const remaining = Math.max(totalQuestions - completedCount, 0);
@@ -112,6 +114,22 @@ export default function HomeScreen({
           <div className="text-[15.5px] font-bold text-[var(--ink-0)]">Generate from a PDF</div>
           <p className="m-0 text-[12.5px] text-[var(--ink-1)]">
             Turn lecture notes or review PDFs into new practice questions.
+          </p>
+        </span>
+      </button>
+
+      {/* Import from JSON card */}
+      <button
+        onClick={onOpenImport}
+        className="mb-4 flex items-center gap-3.5 rounded-[var(--radius-md)] border border-[var(--line)] bg-black/[0.035] p-4 text-left"
+      >
+        <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[rgba(46,139,87,0.14)] text-[var(--accent)]">
+          <FileJson size={20} />
+        </span>
+        <span>
+          <div className="text-[15.5px] font-bold text-[var(--ink-0)]">Import Questions</div>
+          <p className="m-0 text-[12.5px] text-[var(--ink-1)]">
+            Already have a batch from another tool? Paste or upload JSON.
           </p>
         </span>
       </button>

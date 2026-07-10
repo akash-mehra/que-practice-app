@@ -6,12 +6,13 @@ import HomeScreen from "@/components/HomeScreen";
 import LabValuesModal from "@/components/LabValuesModal";
 import GenerateModal from "@/components/GenerateModal";
 import SettingsModal from "@/components/SettingsModal";
+import ImportModal from "@/components/ImportModal";
 import seedQuestions from "@/data/questions.json";
 import type { PracticeQuestion, QuestionProgress } from "@/types/question";
 import { loadQBank, appendToQBank, loadProgress } from "@/lib/qbank";
 
 type Screen = "home" | "block";
-type Overlay = "labValues" | "generate" | "settings" | null;
+type Overlay = "labValues" | "generate" | "settings" | "import" | null;
 
 export default function Home() {
   const seed = seedQuestions as PracticeQuestion[];
@@ -78,6 +79,7 @@ export default function Home() {
           onOpenLabValues={() => setOverlay("labValues")}
           onOpenSettings={() => setOverlay("settings")}
           onOpenGenerate={() => setOverlay("generate")}
+          onOpenImport={() => setOverlay("import")}
         />
       ) : (
         <PracticeBlock
@@ -99,6 +101,10 @@ export default function Home() {
           onNeedsApiKey={() => setOverlay("settings")}
         />
       )}
+      {overlay === "import" && (
+        <ImportModal onClose={() => setOverlay(null)} onImported={handleGenerated} />
+      )}
     </>
   );
 }
+
