@@ -16,6 +16,8 @@ interface PracticeBlockProps {
   startIndex?: number;
   onGoHome?: () => void;
   onQuestionUpdated?: (id: string, solution: QuestionSolution) => void;
+  moduleName?: string;
+  timerMinutes?: number;
 }
 
 const emptyProgress: QuestionProgress = {
@@ -30,6 +32,8 @@ export default function PracticeBlock({
   startIndex = 0,
   onGoHome,
   onQuestionUpdated,
+  moduleName,
+  timerMinutes,
 }: PracticeBlockProps) {
   const [currentIndex, setCurrentIndex] = useState(
     Math.min(Math.max(startIndex, 0), Math.max(questions.length - 1, 0))
@@ -122,6 +126,8 @@ export default function PracticeBlock({
         onToggleTutorMode={() => setTutorMode((v) => !v)}
         onOpenLabValues={() => setLabValuesOpen(true)}
         onGoHome={onGoHome}
+        timerMinutes={timerMinutes}
+        blockLabel={moduleName ? `${moduleName} · USMLE Step 1 Practice` : undefined}
       />
 
       <main className={`flex flex-1 flex-col ${showSolution ? "overflow-y-auto" : "overflow-hidden"}`}>

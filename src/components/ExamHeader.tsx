@@ -12,6 +12,8 @@ interface ExamHeaderProps {
   onToggleTutorMode: () => void;
   onOpenLabValues: () => void;
   onGoHome?: () => void;
+  timerMinutes?: number;
+  blockLabel?: string;
 }
 
 function formatTime(totalSeconds: number) {
@@ -32,8 +34,10 @@ export default function ExamHeader({
   onToggleTutorMode,
   onOpenLabValues,
   onGoHome,
+  timerMinutes = 90,
+  blockLabel = "Block 1 · USMLE Step 1 Practice",
 }: ExamHeaderProps) {
-  const [secondsLeft, setSecondsLeft] = useState(90 * 60);
+  const [secondsLeft, setSecondsLeft] = useState(timerMinutes * 60);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -62,9 +66,7 @@ export default function ExamHeader({
             Item {questionNumber}{" "}
             <span className="text-[var(--ink-muted)] font-normal">of {totalQuestions}</span>
           </span>
-          <span className="text-[11px] text-[var(--ink-muted)]">
-            Block 1 &middot; USMLE Step 1 Practice
-          </span>
+          <span className="text-[11px] text-[var(--ink-muted)]">{blockLabel}</span>
         </div>
         <div className="hidden sm:flex items-center gap-2 border-l border-[var(--line)] pl-4">
           <span className="rounded-full bg-[rgba(46,139,87,0.14)] px-2.5 py-1 text-[11px] font-medium text-[var(--accent)]">

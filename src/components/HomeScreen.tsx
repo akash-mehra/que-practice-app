@@ -1,6 +1,6 @@
 "use client";
 
-import { Settings, ArrowRight, Flag, FlaskConical, BookOpenCheck, Sparkles, FileJson } from "lucide-react";
+import { Settings, ArrowRight, Flag, FlaskConical, BookOpenCheck, Sparkles, FileJson, Layers } from "lucide-react";
 import type { PracticeQuestion } from "@/types/question";
 
 interface HomeScreenProps {
@@ -8,11 +8,13 @@ interface HomeScreenProps {
   totalQuestions: number;
   completedCount: number;
   flaggedCount: number;
+  moduleCount: number;
   onStart: () => void;
   onOpenLabValues: () => void;
   onOpenSettings: () => void;
   onOpenGenerate: () => void;
   onOpenImport: () => void;
+  onOpenModuleLibrary: () => void;
 }
 
 function getGreeting() {
@@ -35,11 +37,13 @@ export default function HomeScreen({
   totalQuestions,
   completedCount,
   flaggedCount,
+  moduleCount,
   onStart,
   onOpenLabValues,
   onOpenSettings,
   onOpenGenerate,
   onOpenImport,
+  onOpenModuleLibrary,
 }: HomeScreenProps) {
   const teaser = nextQuestion.vignette.slice(0, 110).trim() + "…";
   const remaining = Math.max(totalQuestions - completedCount, 0);
@@ -101,6 +105,24 @@ export default function HomeScreen({
           <div className="mt-1.5 text-[12.5px] text-[var(--ink-1)]">Items remaining</div>
         </div>
       </div>
+
+      {/* Module Library entry point */}
+      <button
+        onClick={onOpenModuleLibrary}
+        className="mb-3 flex items-center justify-between rounded-[var(--radius-md)] border border-[var(--line)] bg-black/[0.035] p-4 text-left"
+      >
+        <span className="flex items-center gap-3.5">
+          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[rgba(46,139,87,0.14)] text-[var(--accent)]">
+            <Layers size={20} />
+          </span>
+          <span>
+            <div className="text-[15.5px] font-bold text-[var(--ink-0)]">Module Library</div>
+            <p className="m-0 text-[12.5px] text-[var(--ink-1)]">
+              {moduleCount} saved module{moduleCount === 1 ? "" : "s"} — practice one at a time.
+            </p>
+          </span>
+        </span>
+      </button>
 
       {/* Generate from PDF card */}
       <button

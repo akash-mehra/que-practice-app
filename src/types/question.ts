@@ -27,3 +27,21 @@ export interface QuestionProgress {
   flagged: boolean;
   blockEnded: boolean;
 }
+
+export interface Module {
+  id: string;
+  name: string;
+  createdAt: string; // ISO timestamp
+  timerMinutes: number;
+  questionIds: string[];
+  sourcePdfId?: string;
+}
+
+export interface PdfSourceMeta {
+  id: string;
+  name: string;
+  createdAt: string; // ISO timestamp
+  extractedCount: number; // how many questions have been pulled from this PDF so far
+  sizeBytes: number;
+}
+

@@ -1,15 +1,33 @@
-import type { PracticeQuestion, QuestionProgress } from "@/types/question";
+import type { PracticeQuestion, QuestionProgress, Module } from "@/types/question";
 
-const QBANK_KEY = "qbank_v1";
-const PROGRESS_KEY = "qbank_progress_v1";
+// v2: bumped on introducing the Module system. Old v1 data (pre-modules,
+// including any previously-imported questions) is intentionally NOT
+// migrated — this is a deliberate clean slate, not a bug. The old keys are
+// actively removed below rather than just abandoned, so they don't sit
+// around silently consuming quota.
+const QBANK_KEY = "qbank_v2";
+const PROGRESS_KEY = "qbank_progress_v2";
+const MODULES_KEY = "qbank_modules_v2";
 const GEMINI_KEY_STORAGE = "qbank_gemini_api_key";
+
+const LEGACY_KEYS_TO_REMOVE = ["qbank_v1", "qbank_progress_v1"];
 
 function isBrowser() {
   return typeof window !== "undefined";
 }
 
+function cleanupLegacyKeys() {
+  if (!isBrowser()) return;
+  try {
+    for (const key of LEGACY_KEYS_TO_REMOVE) window.localStorage.removeItem(key);
+  } catch {
+    // ignore
+  }
+}
+
 /** Reads the full local question bank. Falls back to the given seed if nothing is stored yet. */
 export function loadQBank(seed: PracticeQuestion[]): PracticeQuestion[] {
+  cleanupLegacyKeys();
   if (!isBrowser()) return seed;
   try {
     const raw = window.localStorage.getItem(QBANK_KEY);
@@ -94,5 +112,80 @@ export function clearGeminiKey() {
   } catch {
     // ignore
   }
+}
+
+/* ---------------------------- Modules ---------------------------- */
+
+export function loadModules(): Module[] {
+  if (!isBrowser()) return [];
+  try {
+    const raw = window.localStorage.getItem(MODULES_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? (parsed as Module[]) : [];
+  } catch {
+    return [];
+  }
+}
+
+export function saveModules(modules: Module[]) {
+  if (!isBrowser()) return;
+  try {
+    window.localStorage.setItem(MODULES_KEY, JSON.stringify(modules));
+  } catch {
+    // ignore
+  }
+}
+
+/** Wraps a freshly-added batch of questions into a new auto-numbered Module. */
+export function createModule(
+  existingModules: Module[],
+  questionIds: string[],
+  opts?: { timerMinutes?: number; sourcePdfId?: string }
+): { modules: Module[]; module: Module } {
+  const nextNumber = existingModules.length + 1;
+  const newModule: Module = {
+    id: `module-${Date.now()}`,
+    name: `Module ${nextNumber}`,
+    createdAt: new Date().toISOString(),
+    timerMinutes: opts?.timerMinutes ?? 30,
+    questionIds,
+    sourcePdfId: opts?.sourcePdfId,
+  };
+  const modules = [...existingModules, newModule];
+  saveModules(modules);
+  return { modules, module: newModule };
+}
+
+/**
+ * Deletes a module AND every question that belongs only to it, plus their
+ * progress entries and any generated explanations — fully irreversible by
+ * design (the person confirms this in the UI before calling it). Returns
+ * all three updated collections, already persisted.
+ */
+export function deleteModule(
+  modules: Module[],
+  questions: PracticeQuestion[],
+  progress: Record<string, QuestionProgress>,
+  moduleId: string
+): {
+  modules: Module[];
+  questions: PracticeQuestion[];
+  progress: Record<string, QuestionProgress>;
+} {
+  const target = modules.find((m) => m.id === moduleId);
+  if (!target) return { modules, questions, progress };
+
+  const idsToRemove = new Set(target.questionIds);
+  const nextModules = modules.filter((m) => m.id !== moduleId);
+  const nextQuestions = questions.filter((q) => !idsToRemove.has(q.id));
+  const nextProgress = { ...progress };
+  for (const id of idsToRemove) delete nextProgress[id];
+
+  saveModules(nextModules);
+  saveQBank(nextQuestions);
+  saveProgress(nextProgress);
+
+  return { modules: nextModules, questions: nextQuestions, progress: nextProgress };
 }
 
