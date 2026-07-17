@@ -10,6 +10,7 @@ import {
   Sparkles,
   History,
   Copy,
+  Image as ImageIcon,
 } from "lucide-react";
 import {
   generateQuestionsFromPdf,
@@ -20,6 +21,8 @@ import {
 import { loadGeminiKey } from "@/lib/qbank";
 import { flagDuplicates, type DuplicateFlaggedQuestion } from "@/lib/fingerprint";
 import { savePdfSource, listPdfSources, getPdfFile, updateExtractedCount } from "@/lib/pdfStore";
+import { extractPdfContent } from "@/lib/pdfImageExtractor";
+import { matchImagesToQuestions, type UnmatchedImage } from "@/lib/matchImagesToQuestions";
 import type { PracticeQuestion, PdfSourceMeta } from "@/types/question";
 
 interface GenerateModalProps {
@@ -58,6 +61,9 @@ export default function GenerateModal({
   const [flagged, setFlagged] = useState<DuplicateFlaggedQuestion[]>([]);
   const [included, setIncluded] = useState<Set<number>>(new Set());
   const [successCount, setSuccessCount] = useState<number | null>(null);
+  const [unmatchedImages, setUnmatchedImages] = useState<UnmatchedImage[]>([]);
+  const [imageAssignments, setImageAssignments] = useState<Record<string, number | null>>({});
+  const [extractingImages, setExtractingImages] = useState(false);
 
   useEffect(() => {
     listPdfSources()
@@ -128,7 +134,39 @@ export default function GenerateModal({
         updateExtractedCount(pdfId, priorCount + results.length).catch(() => {});
       }
 
-      const flaggedResults = flagDuplicates(results, existingQuestions);
+      // Pull real images out of the PDF itself (Gemini can't return actual
+      // image bytes, only describe what it sees). This is best-effort and
+      // must never block getting text-only questions if it fails for any
+      // reason (corrupt PDF, unsupported image encoding, etc.).
+      let questionsWithImages = results;
+      try {
+        setExtractingImages(true);
+        const tokens = await extractPdfContent(file);
+        // Position-based matching only makes sense in Extract mode, since
+        // that's the only mode where the returned text corresponds to real
+        // positions in the source PDF — Generate mode writes new questions
+        // "inspired by" the material, with no real position to match against.
+        if (mode === "extract") {
+          const matchResult = matchImagesToQuestions(results, tokens);
+          questionsWithImages = matchResult.questions;
+          setUnmatchedImages(matchResult.unmatched);
+        } else {
+          const allImages = tokens.filter(
+            (t): t is typeof t & { type: "image"; tokenId: string; dataUrl: string } =>
+              t.type === "image" && !!t.tokenId && !!t.dataUrl
+          );
+          setUnmatchedImages(
+            allImages.map((t) => ({ tokenId: t.tokenId, dataUrl: t.dataUrl, page: t.page }))
+          );
+        }
+      } catch {
+        // Image extraction is a bonus, not a requirement — proceed text-only.
+        setUnmatchedImages([]);
+      } finally {
+        setExtractingImages(false);
+      }
+
+      const flaggedResults = flagDuplicates(questionsWithImages, existingQuestions);
       setFlagged(flaggedResults);
       // Default: unique questions checked, duplicates unchecked.
       setIncluded(
@@ -156,7 +194,24 @@ export default function GenerateModal({
   };
 
   const handleCommit = () => {
-    const selected = flagged.filter((_, i) => included.has(i)).map((f) => f.question);
+    const selectedIndexes = Array.from(included).sort((a, b) => a - b);
+    // Manual assignments reference a question by its index in `flagged`
+    // (the full generated batch, before the include/exclude filter is
+    // applied) — map those onto the filtered selection here.
+    const imagesByFlaggedIndex = new Map<number, string>();
+    for (const img of unmatchedImages) {
+      const assignedIndex = imageAssignments[img.tokenId];
+      if (assignedIndex !== null && assignedIndex !== undefined) {
+        imagesByFlaggedIndex.set(assignedIndex, img.dataUrl);
+      }
+    }
+
+    const selected = selectedIndexes.map((i) => {
+      const q = flagged[i].question;
+      const manualImage = imagesByFlaggedIndex.get(i);
+      return manualImage ? { ...q, vignette_image: manualImage } : q;
+    });
+
     onGenerated(selected, activePdfId ?? undefined);
     setSuccessCount(selected.length);
     setStage("done");
@@ -379,6 +434,16 @@ export default function GenerateModal({
                 </div>
               );
             })}
+            {extractingImages && (
+              <div className="mb-3 flex items-center gap-3">
+                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-[var(--accent)] bg-[var(--accent)] text-white">
+                  <Loader2 size={14} className="animate-spin" />
+                </span>
+                <span className="text-[13.5px] text-[var(--ink-0)]">
+                  Matching images from the PDF
+                </span>
+              </div>
+            )}
           </div>
         )}
 
@@ -427,6 +492,53 @@ export default function GenerateModal({
                 </label>
               ))}
             </div>
+
+            {unmatchedImages.length > 0 && (
+              <div className="mb-5">
+                <p className="mb-2 flex items-center gap-1.5 text-[12.5px] font-semibold text-[var(--ink-1)]">
+                  <ImageIcon size={14} />
+                  {unmatchedImages.length} image{unmatchedImages.length === 1 ? "" : "s"} found
+                  but not confidently matched — assign manually if they belong to a question
+                </p>
+                <div className="flex flex-col gap-2.5">
+                  {unmatchedImages.map((img) => (
+                    <div
+                      key={img.tokenId}
+                      className="flex items-center gap-3 rounded-xl border border-[var(--line)] bg-black/[0.02] p-2.5"
+                    >
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={img.dataUrl}
+                        alt={`Unmatched image from page ${img.page}`}
+                        className="h-14 w-14 shrink-0 rounded-lg border border-[var(--line)] object-cover"
+                      />
+                      <div className="flex-1">
+                        <p className="mb-1 text-[11.5px] text-[var(--ink-muted)]">
+                          Page {img.page}
+                        </p>
+                        <select
+                          value={imageAssignments[img.tokenId] ?? ""}
+                          onChange={(e) =>
+                            setImageAssignments((prev) => ({
+                              ...prev,
+                              [img.tokenId]: e.target.value === "" ? null : Number(e.target.value),
+                            }))
+                          }
+                          className="w-full rounded-lg border border-[var(--line)] bg-[var(--bg-0)] px-2 py-1.5 text-[12.5px] text-[var(--ink-0)] outline-none focus:border-[var(--accent)]"
+                        >
+                          <option value="">Skip this image</option>
+                          {flagged.map((f, i) => (
+                            <option key={f.question.id} value={i}>
+                              Assign to Q{i + 1}: {f.question.vignette.slice(0, 40)}…
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
 
             <div className="flex gap-2.5">
               <button
