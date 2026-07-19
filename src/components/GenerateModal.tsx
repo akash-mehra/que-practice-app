@@ -64,6 +64,7 @@ export default function GenerateModal({
   const [unmatchedImages, setUnmatchedImages] = useState<UnmatchedImage[]>([]);
   const [imageAssignments, setImageAssignments] = useState<Record<string, number | null>>({});
   const [extractingImages, setExtractingImages] = useState(false);
+  const [imageExtractionError, setImageExtractionError] = useState<string | null>(null);
 
   useEffect(() => {
     listPdfSources()
@@ -141,6 +142,7 @@ export default function GenerateModal({
       let questionsWithImages = results;
       try {
         setExtractingImages(true);
+        setImageExtractionError(null);
         const tokens = await extractPdfContent(file);
         // Position-based matching only makes sense in Extract mode, since
         // that's the only mode where the returned text corresponds to real
@@ -159,8 +161,14 @@ export default function GenerateModal({
             allImages.map((t) => ({ tokenId: t.tokenId, dataUrl: t.dataUrl, page: t.page }))
           );
         }
-      } catch {
-        // Image extraction is a bonus, not a requirement — proceed text-only.
+      } catch (imgErr) {
+        // Image extraction is a bonus, not a requirement — text-only
+        // questions still proceed. But the failure itself must be visible,
+        // not silent, or there's no way to ever diagnose what went wrong.
+        console.error("PDF image extraction failed:", imgErr);
+        setImageExtractionError(
+          imgErr instanceof Error ? imgErr.message : "Unknown error during image extraction."
+        );
         setUnmatchedImages([]);
       } finally {
         setExtractingImages(false);
@@ -492,6 +500,16 @@ export default function GenerateModal({
                 </label>
               ))}
             </div>
+
+            {imageExtractionError && (
+              <div className="mb-4 flex items-start gap-2 rounded-xl border border-[rgba(214,69,69,0.35)] bg-[rgba(214,69,69,0.08)] p-3.5 text-[12.5px] text-[var(--danger)]">
+                <AlertCircle size={16} className="mt-0.5 shrink-0" />
+                <span>
+                  Image extraction from this PDF failed — questions were still generated from
+                  the text. Error: {imageExtractionError}
+                </span>
+              </div>
+            )}
 
             {unmatchedImages.length > 0 && (
               <div className="mb-5">

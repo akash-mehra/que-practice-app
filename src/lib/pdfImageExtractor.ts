@@ -28,7 +28,17 @@ export interface PdfToken {
 // build rather than bundling a separate worker file into this project.
 async function getPdfjs() {
   const pdfjsLib = await import("pdfjs-dist");
-  pdfjsLib.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
+  // Resolve the worker as a bundled asset (Turbopack/webpack rewrite this to
+  // a local URL at build time) rather than fetching it from a CDN at
+  // runtime. A CDN dependency here is a real, silent failure mode on a
+  // static site — if unpkg is unreachable, blocked by a network filter, or
+  // briefly out of sync with the installed pdfjs-dist version, extraction
+  // fails with no obvious cause. Bundling it removes that dependency
+  // entirely; the worker ships with the app itself.
+  pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
+    "pdfjs-dist/build/pdf.worker.min.mjs",
+    import.meta.url
+  ).toString();
   return pdfjsLib;
 }
 
